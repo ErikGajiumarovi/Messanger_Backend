@@ -1,8 +1,6 @@
 package com.erik
 
-import com.erik.database.DatabaseFactory
-import com.erik.database.getUserChats
-import com.erik.database.saveMessage
+import com.erik.database.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -11,11 +9,13 @@ import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.runBlocking
 import java.time.Duration
 import java.util.concurrent.ConcurrentHashMap
 
 fun main() {
-    DatabaseFactory.init()
+    Database.init()
+    createMessagesTable()
     embeddedServer(Netty, port = 80) {
         install(WebSockets) {
             pingPeriod = Duration.ofSeconds(15)

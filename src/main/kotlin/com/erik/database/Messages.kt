@@ -18,6 +18,13 @@ object Messages : Table() {
     override val primaryKey = PrimaryKey(id)
 }
 
+fun createMessagesTable() {
+    transaction {
+        // Создает таблицу, если она не существует
+        SchemaUtils.create(Messages)
+    }
+}
+
 suspend fun saveMessage(chatId: String, sender: String, receiver: String, message: String) {
     withContext(Dispatchers.IO) {
         newSuspendedTransaction {

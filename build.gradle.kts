@@ -11,6 +11,12 @@ repositories {
     mavenCentral()
 }
 dependencies {
+
+    // JDBC Driver для SQLite
+    implementation("org.xerial:sqlite-jdbc:3.41.2.1") // Используйте актуальную версию
+
+    implementation("org.mongodb:mongodb-driver-kotlin-coroutine:5.4.0")
+
     implementation("com.zaxxer:HikariCP:5.1.0") // Connection Pool
     implementation("org.jetbrains.exposed:exposed-core:0.40.1")
     implementation("org.jetbrains.exposed:exposed-dao:0.40.1")
