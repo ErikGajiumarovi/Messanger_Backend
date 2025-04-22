@@ -1,6 +1,7 @@
 package com.erik
 
 import com.erik.database.*
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -14,9 +15,9 @@ import java.time.Duration
 import java.util.concurrent.ConcurrentHashMap
 
 fun main() {
-    Database.init()
+    DatabaseFactory.init()
     createMessagesTable()
-    embeddedServer(Netty, port = 80) {
+    embeddedServer(Netty, port = 8080) {
         install(WebSockets) {
             pingPeriod = Duration.ofSeconds(15)
             timeout = Duration.ofSeconds(15)
@@ -26,6 +27,17 @@ fun main() {
         routing {
             get("/test") {
                 call.respondText("Server is working")
+            }
+
+            get("/file") {
+                call.response.header(
+                    HttpHeaders.ContentDisposition,
+                    "attachment; filename=\"generated.txt\""
+                )
+                call.respondBytes(
+                    "Привет! Это сгенерированный текстовый файл.".toByteArray(),
+                    ContentType.Text.Plain
+                )
             }
 
             // Новый эндпоинт для получения списка чатов пользователя
