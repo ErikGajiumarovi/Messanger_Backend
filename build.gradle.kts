@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "1.9.22"
     id("io.ktor.plugin") version "2.3.8"
+    kotlin("plugin.serialization") version "1.9.0"
 }
 
 application {
@@ -11,12 +12,6 @@ repositories {
     mavenCentral()
 }
 dependencies {
-
-    // JDBC Driver для SQLite
-    implementation("org.xerial:sqlite-jdbc:3.41.2.1") // Используйте актуальную версию
-
-    implementation("org.mongodb:mongodb-driver-kotlin-coroutine:5.4.0")
-
     implementation("com.zaxxer:HikariCP:5.1.0") // Connection Pool
     implementation("org.jetbrains.exposed:exposed-core:0.40.1")
     implementation("org.jetbrains.exposed:exposed-dao:0.40.1")
@@ -33,9 +28,6 @@ dependencies {
     // JWT (для аутентификации)
     implementation("io.ktor:ktor-server-auth:2.3.8")
     implementation("io.ktor:ktor-server-auth-jwt:2.3.8")
-
-
-    testImplementation("io.ktor:ktor-server-test-host-jvm:2.3.8") // Логирование
 }
 
 kotlin {

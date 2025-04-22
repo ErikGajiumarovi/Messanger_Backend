@@ -4,6 +4,7 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
 fun Application.configureSerialization() {
@@ -15,3 +16,10 @@ fun Application.configureSerialization() {
         })
     }
 }
+
+
+@Serializable
+data class RegisterRequest(val phoneNumber: String)
+
+@Serializable
+data class VerifyRequest(val phoneNumber: String, val otp: String)

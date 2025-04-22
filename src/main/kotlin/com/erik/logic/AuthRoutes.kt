@@ -6,6 +6,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+
 fun Route.authRoutes() {
     post("/auth/register") {
         val request = call.receive<RegisterRequest>()
@@ -21,5 +22,4 @@ fun Route.authRoutes() {
     }
 }
 
-data class RegisterRequest(val phoneNumber: String)
-data class VerifyRequest(val phoneNumber: String, val otp: String)
+
