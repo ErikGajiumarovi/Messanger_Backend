@@ -1,89 +1,23 @@
 package com.erik
 
-import com.erik.database.*
-import io.ktor.http.*
-import io.ktor.server.application.*
+import com.erik.database.DatabaseFactory
+import com.erik.logic.configureAuth
+import com.erik.logic.configureRouting
+import com.erik.logic.configureSerialization
+import com.erik.logic.configureWebSockets
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import io.ktor.server.websocket.*
-import io.ktor.websocket.*
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.runBlocking
-import java.time.Duration
-import java.util.concurrent.ConcurrentHashMap
 
 fun main() {
     DatabaseFactory.init()
-    createMessagesTable()
     embeddedServer(Netty, port = 8080) {
-        install(WebSockets) {
-            pingPeriod = Duration.ofSeconds(15)
-            timeout = Duration.ofSeconds(15)
-            maxFrameSize = Long.MAX_VALUE
-        }
-
-        routing {
-            get("/test") {
-                call.respondText("Server is working")
-            }
-
-            get("/file") {
-                call.response.header(
-                    HttpHeaders.ContentDisposition,
-                    "attachment; filename=\"generated.txt\""
-                )
-                call.respondBytes(
-                    "Привет! Это сгенерированный текстовый файл.".toByteArray(),
-                    ContentType.Text.Plain
-                )
-            }
-
-            // Новый эндпоинт для получения списка чатов пользователя
-            get("/chats/{username}") {
-                val username = call.parameters["username"]
-                if (username == null) {
-                    call.respondText("Username is required")
-                    return@get
-                }
-
-                val chats = getUserChats(username)
-                call.respond(chats)
-            }
-
-            val clients = ConcurrentHashMap<String, DefaultWebSocketSession>()
-
-            webSocket("/chat/{username}") {
-                val username = call.parameters["username"]
-                if (username == null) {
-                    close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "No username"))
-                    return@webSocket
-                }
-
-                clients[username] = this
-                println("$username подключился!")
-
-                try {
-                    incoming.consumeEach { frame ->
-                        if (frame is Frame.Text) {
-                            val text = frame.readText()
-                            println("[$username]: $text")
-
-                            // Сохранение в базу данных
-                            saveMessage(chatId = "global", sender = username, receiver = "all", message = text)
-
-                            // Рассылка сообщения всем клиентам
-                            clients.values.forEach { session ->
-                                session.send("[$username]: $text")
-                            }
-                        }
-                    }
-                } finally {
-                    clients.remove(username)
-                    println("$username отключился!")
-                }
-            }
-        }
+        configureSerialization()
+        configureAuth()  // Подключаем JWT аутентификацию
+        configureRouting()
+        configureWebSockets()
     }.start(wait = true)
 }
+
+
+
+
