@@ -9,6 +9,7 @@ import com.erik.database.tables.Media
 import com.erik.database.tables.MessageStatuses
 import com.erik.database.tables.Messages
 import com.erik.database.tables.OtpCodes
+import com.erik.database.tables.RefreshTokens
 import com.erik.database.tables.RegistrationTempData
 import com.erik.database.tables.Users
 import com.zaxxer.hikari.HikariConfig
@@ -52,7 +53,8 @@ object DatabaseFactory {
                 Calls,
                 Blocks,
                 RegistrationTempData,
-                OtpCodes
+                OtpCodes,
+                RefreshTokens
             )
         }
     }

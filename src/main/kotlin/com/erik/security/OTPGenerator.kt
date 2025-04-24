@@ -5,7 +5,7 @@ import kotlin.random.Random
 /**
  * Генератор одноразовых паролей (OTP)
  */
-object OTP {
+object OTPGenerator {
 
     /**
      * Генерирует числовой OTP заданной длины

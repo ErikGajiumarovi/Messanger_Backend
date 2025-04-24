@@ -1,11 +1,16 @@
-package com.erik.logic
+package com.erik.utils
 
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import java.util.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.request.headers
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import java.util.Base64
 
 object EmailSender {
     suspend fun sendEmail(
@@ -62,7 +67,7 @@ object EmailSender {
 
         println("Mailjet response: ${response.bodyAsText()}")
 
-        if (response.status == HttpStatusCode.OK) {
+        if (response.status == HttpStatusCode.Companion.OK) {
             return true
         } else {
             return false
@@ -83,4 +88,3 @@ object EmailSender {
         )
     }
 }
-

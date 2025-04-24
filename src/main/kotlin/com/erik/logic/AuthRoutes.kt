@@ -1,12 +1,14 @@
 package com.erik.logic
 
 import com.erik.database.tables.OtpCodes
+import com.erik.database.tables.RefreshTokens
 import com.erik.database.tables.RegistrationTempData
 import com.erik.database.tables.Users
 import com.erik.security.Argon2.hashPassword
 import com.erik.security.Argon2.verifyPassword
-import com.erik.security.OTP
-import com.erik.security.generateToken
+import com.erik.security.OTPGenerator
+import com.erik.security.JWTGenerator
+import com.erik.utils.EmailSender
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -15,7 +17,6 @@ import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 
 
@@ -31,14 +32,16 @@ fun Route.authRoutes() {
         val request = call.receive<LoginRequest>()
 
         // Проверка пароля
-        val user = Users.select { Users.username eq request.username }.firstOrNull()
+        val user = transaction {
+            Users.select { Users.username eq request.username }.firstOrNull()
+        }
         if (user == null || !verifyPassword(request.password, user[Users.password])) {
             call.respond(HttpStatusCode.Unauthorized)
             return@post
         }
 
         // Генерация OTP для 2FA
-        val code = OTP.generateNumericOTP()
+        val code = OTPGenerator.generateNumericOTP()
         transaction {
             OtpCodes.insert {
                 it[OtpCodes.purpose] = "LOGIN"
@@ -91,7 +94,7 @@ fun Route.authRoutes() {
         }
 
         // Генерация OTP
-        val code = OTP.generateNumericOTP()
+        val code = OTPGenerator.generateNumericOTP()
         transaction {
             OtpCodes.insert {
                 it[OtpCodes.purpose] = "REGISTRATION"
@@ -168,7 +171,8 @@ fun Route.authRoutes() {
                     OtpCodes.deleteWhere { id eq otpRecord[OtpCodes.id] }
                 }
 
-                call.respond(mapOf("token" to generateToken(userId)))
+                val tokenPair = JWTGenerator.generateTokenPair(userId)
+                call.respond(tokenPair)
             }
             "LOGIN" -> {
                 // 2FA: выдача токена
@@ -176,11 +180,51 @@ fun Route.authRoutes() {
                 transaction {
                     OtpCodes.deleteWhere { id eq otpRecord[OtpCodes.id] }
                 }
-                call.respond(mapOf("token" to generateToken(userId)))
+
+                val tokenPair = JWTGenerator.generateTokenPair(userId)
+                call.respond(tokenPair)
             }
             else -> call.respond(HttpStatusCode.BadRequest)
         }
     }
+
+    @Serializable
+    data class RefreshTokenRequest(val refreshToken: String)
+
+    post("/auth/refresh") {
+        val request = call.receive<RefreshTokenRequest>()
+        val refreshToken = request.refreshToken
+
+        try {
+            // Генерируем новый access token
+            val newAccessToken = JWTGenerator.refreshAccessToken(refreshToken)
+
+            call.respond(mapOf("accessToken" to newAccessToken))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Invalid token"))
+        }
+    }
+
+    @Serializable
+    data class LogoutRequest(val refreshToken: String)
+
+    post("/auth/logout") {
+        val request = call.receive<LogoutRequest>()
+        val refreshToken = request.refreshToken
+
+        transaction {
+            RefreshTokens.update({ RefreshTokens.token eq refreshToken }) {
+                it[RefreshTokens.revoked] = true
+            }
+        }
+
+        call.respond(mapOf("success" to true))
+    }
+
+
+
+
 
 }
 
