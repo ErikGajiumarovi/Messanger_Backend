@@ -3,12 +3,9 @@ package com.erik.logic
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.erik.security.Jwt
-import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
-import io.ktor.server.plugins.contentnegotiation.*
-import kotlinx.serialization.json.Json
 
 fun Application.configureAuth() {
     install(Authentication) {

@@ -1,4 +1,4 @@
-package com.erik.database
+package com.erik.database.tables
 
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table

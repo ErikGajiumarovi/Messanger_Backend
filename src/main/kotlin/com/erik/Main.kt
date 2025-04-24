@@ -1,6 +1,7 @@
 package com.erik
 
 import com.erik.database.DatabaseFactory
+import com.erik.logic.EmailSender
 import com.erik.logic.configureAuth
 import com.erik.logic.configureRouting
 import com.erik.logic.configureSerialization
@@ -12,7 +13,7 @@ fun main() {
     DatabaseFactory.init()
     embeddedServer(Netty, port = 8080) {
         configureSerialization()
-        configureAuth()  // Подключаем JWT аутентификацию
+        configureAuth()
         configureRouting()
         configureWebSockets()
     }.start(wait = true)

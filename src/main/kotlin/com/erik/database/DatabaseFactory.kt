@@ -1,5 +1,16 @@
 package com.erik.database
 
+import com.erik.database.tables.Blocks
+import com.erik.database.tables.Calls
+import com.erik.database.tables.ChatMembers
+import com.erik.database.tables.Chats
+import com.erik.database.tables.Contacts
+import com.erik.database.tables.Media
+import com.erik.database.tables.MessageStatuses
+import com.erik.database.tables.Messages
+import com.erik.database.tables.OtpCodes
+import com.erik.database.tables.RegistrationTempData
+import com.erik.database.tables.Users
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.jetbrains.exposed.sql.Database
@@ -39,7 +50,9 @@ object DatabaseFactory {
                 MessageStatuses,
                 Contacts,
                 Calls,
-                Blocks
+                Blocks,
+                RegistrationTempData,
+                OtpCodes
             )
         }
     }

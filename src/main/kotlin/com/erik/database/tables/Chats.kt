@@ -1,7 +1,6 @@
-package com.erik.database
+package com.erik.database.tables
 
 import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.ReferenceOption
 
 object Chats : Table("chats") {
     val id = integer("id").autoIncrement()

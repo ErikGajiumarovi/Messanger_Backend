@@ -16,10 +16,3 @@ fun Application.configureSerialization() {
         })
     }
 }
-
-
-@Serializable
-data class RegisterRequest(val phoneNumber: String)
-
-@Serializable
-data class VerifyRequest(val phoneNumber: String, val otp: String)
