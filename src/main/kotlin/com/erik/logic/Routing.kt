@@ -1,5 +1,7 @@
 package com.erik.logic
 
+import com.erik.routes.authRoutes
+import com.erik.routes.chatRoutes
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.response.respondText

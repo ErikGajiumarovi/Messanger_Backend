@@ -1,4 +1,4 @@
-package com.erik.logic
+package com.erik.routes
 
 import io.ktor.server.application.call
 import io.ktor.server.auth.*

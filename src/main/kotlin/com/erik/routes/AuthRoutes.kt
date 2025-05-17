@@ -1,4 +1,4 @@
-package com.erik.logic
+package com.erik.routes
 
 import com.erik.database.tables.OtpCodes
 import com.erik.database.tables.RefreshTokens
