@@ -14,6 +14,7 @@ import com.erik.database.tables.RegistrationTempData
 import com.erik.database.tables.Users
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import io.github.cdimascio.dotenv.Dotenv
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.TransactionManager
@@ -25,8 +26,19 @@ object DatabaseFactory {
     private lateinit var dataSource: HikariDataSource
 
     fun init() {
+        // Загрузка переменных окружения из файла .env
+        val dotenv = Dotenv.load()
+
+        // Получение учетных данных из переменных окружения
+        val dbHost = dotenv["DB_HOST"]
+        val dbName = dotenv["DB_NAME"]
+        val dbUser = dotenv["DB_USER"]
+        val dbPassword = dotenv["DB_PASSWORD"]
+
+        val jdbcUrl = "jdbc:postgresql://$dbHost/$dbName?sslmode=require&user=$dbUser&password=$dbPassword"
+
         val config = HikariConfig().apply {
-            jdbcUrl = "jdbc:postgresql://localhost:5432/postgres"
+            this.jdbcUrl = jdbcUrl
             driverClassName = "org.postgresql.Driver"
             maximumPoolSize = 10
             isAutoCommit = false

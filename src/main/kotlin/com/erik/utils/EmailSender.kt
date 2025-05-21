@@ -1,5 +1,6 @@
 package com.erik.utils
 
+import io.github.cdimascio.dotenv.Dotenv
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.request.headers
@@ -22,8 +23,9 @@ object EmailSender {
         textBody: String,
         htmlBody: String
     ): Boolean {
-        val apiKey = System.getenv("API_mailjet")
-        val apiSecret = System.getenv("SECRET_mailjet")
+        val dotenv = Dotenv.load()
+        val apiKey = dotenv["API_mailjet"]
+        val apiSecret = dotenv["SECRET_mailjet"]
 
         println("APIs key and secret:")
         println(apiKey)

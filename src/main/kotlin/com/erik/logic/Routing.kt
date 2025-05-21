@@ -14,7 +14,7 @@ fun Application.configureRouting() {
         chatRoutes()  // Подключаем роуты чатов
 
         // Тестовый эндпоинт
-        get("/test") {
+        get("/") {
             call.respondText("Server is working!")
         }
     }

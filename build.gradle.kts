@@ -41,6 +41,9 @@ dependencies {
     implementation("org.bouncycastle:bcprov-jdk18on:1.78") // Основная библиотека для Argon2
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8") // Стандартная библиотека Kotlin
 
+    // .env
+    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
+
 
 }
 
